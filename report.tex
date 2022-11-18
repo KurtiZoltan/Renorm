@@ -1,0 +1,192 @@
+\documentclass[pdftex,12pt,a4paper]{article}
+\pdfpagewidth 8.5in
+\pdfpageheight 11.6in
+\linespread{1.3}
+\usepackage{anysize}
+\marginsize{2.5cm}{2.5cm}{2.5cm}{2.5cm}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+%\usepackage[magyar]{babel}
+\usepackage{indentfirst}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{braket}
+\usepackage[unicode,pdftex]{hyperref}
+%\usepackage{hyperref}
+\usepackage{breqn}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.3,0.3,0.3}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.90,0.90,0.87}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\small\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\small,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\DeclareMathOperator{\Ai}{Ai}
+\DeclareMathOperator{\Bi}{Bi}
+\DeclareMathOperator{\Aip}{Ai^\prime}
+\DeclareMathOperator{\Bip}{Bi^\prime}
+\DeclareMathOperator{\Ti}{Ti}
+\DeclareMathOperator{\ctg}{ctg}
+\DeclareMathOperator{\sgn}{sgn}
+%\DeclareMathOperator{\max}{max}
+\let\Im\relax
+\DeclareMathOperator{\Im}{Im}
+\DeclareMathOperator{\Tr}{Tr}
+\newcommand{\op}[1]{\hat{#1}}
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand*\Laplace{\mathop{}\!\mathbin\bigtriangleup}
+
+\newcommand{\aeqref}[1]{\az{\eqref{#1}}}
+\newcommand{\Aeqref}[1]{\Az{\eqref{#1}}}
+
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+\hypersetup{	
+	pdftitle={Metropolis algorithm},
+	pdfauthor={Kürti Zoltán}}
+
+\frenchspacing
+\begin{document}
+
+	\centerline{\bf\LARGE Metropolis algorithm}
+
+	\vskip0.4truein\centerline{\Large\sc Kürti Zoltán}\vskip0.10truein
+	%\centerline{\includegraphics[scale=0.5]{./elte_cimer_color.pdf}}
+	\vskip0.4truein
+	\thispagestyle{empty}
+	\newpage
+	%\tableofcontents
+	%\newpage
+	\section{The simulation}
+		As suggested during the lectures I used a rectangular grid with periodic boundary condition with size $L \times L$, up to $L=1024$. Before calculating the magnetization of the system I performed $L\times L$ steps of the Metropolis algorithm. The system was prepared with all spins being $+1$, called a cold start. The code can be found at  \url{https://github.com/KurtiZoltan/Renorm1}.
+	\section{$\beta=0.5$}
+		\ref{steps}. figure provides a good initial impression about the simulation. The contrast between $\beta=0.5$ and $0.45$ is very much visible on this type of plot and will be discussed later. The length of the simulation was 16384 magnetization values, but only the first part was plotted so the effect of the cold start is clearly visible. The relaxation to the equilibrium roughly seems exponential. The exact shape is not that important, I will use this to estimate how much of the data needs to be thrown away to only sample equilibrium configurations.
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=0.65]{./figs/steps.pdf}
+			\caption{These are the original and truncated magnetization values. $L=1024$ and the temperature was $\beta=0.5$. An $A+\exp(-Bn)$ type function was fitted on the data. The second plot only contains the equilibrium configurations so the fluctuations are more visible.}
+			\label{steps}
+		\end{figure}
+		From the exponential fit I got an estimation for how fast the system arrives at equilibrium configurations. The $B$ parameter was $0.246$, so I dropped the first $1/B \approx 40$ magnetization values. The $B$ parameter was $0.246$, and I dropped the first $1/B \approx 40$ magnetization values.
+		
+		It's visible that the calculated magnetization values are indeed correlated to each other. This is why we learned about blocking to better estimate the error of the magnetization. Figure \ref{sigma}. shows the estimated error of the magnetization as a function of the block size.
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=0.75]{./figs/sigma.pdf}
+			\caption{The calculated empirical uncertainty as a function of the block size. $L=1024$ $\beta=0.5$}
+			\label{sigma}
+		\end{figure}
+		As expected the estimated uncertainty grows as a function of the block size due to the correlation between magnetization values calculated close by. As final estimate I choose the error that's the last one before the estimation decreases.
+		
+		The estimated error should depend as $\frac{1}{n^2}$ on the length of the simulation. To check this I truncated the data of the simulation to the appropriate length and calculated the estimated error.
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=0.75]{./figs/sigmalengths.pdf}
+			\caption{The estimated error depending on the length of the simulation.}
+			\label{length}
+		\end{figure}
+		The data seems a bit odd at first, but it has a good explanation. It is important to not that I used the same simulation to estimate the errors for different lengths, so only the magnetization values are the same at the beginning. If the error estimate comes from big bock sizes, (and it will be because of the correlation), adding a couple data points to the end of the data will not change the error estimate, because I dropped that data that didn't fill up a complete block. This is the explanation for the plateaus in figure \ref{length}. Otherwise the plot seems to be linear which is the expectation.
+		
+		To test the effect of $L$ on the simulation I ran the simulation for multiple different values of $L$. The result can be seen in figure \ref{L}. The simulations ran for 16384 magnetization values as before.
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=0.75]{./figs/L.pdf}
+			\caption{Magnetization values at $\beta=0.5$ as a function of $L$.}
+			\label{L}
+		\end{figure}
+		Bigger $L$ values resulted in smaller fluctuations in $m$ producing smaller error bars for the same number of calculated magnetizations. The value mentioned in the exercise description is indicated by the horizontal black line.
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=0.75]{./figs/Lconvergence.pdf}
+			\caption{Magnetization values at $\beta=0.5$ as a function of $L$ focused on large $L$. The black line is the exact value, the two blue lines are the $2\sigma$ error intervals of the $L=1024$ simulation.}
+			\label{Lconergence}
+		\end{figure}
+		On figure \ref{Lconergence} the indicated error bars of the last couple simulations overlap significantly which indicates that the thermodynamic limit is achieved within the error of the final result:
+		\begin{equation}
+		m(0.5) = 0.911294 \pm 0.000037.
+		\end{equation}
+	
+	\section{$\beta=0.45$}
+		I will include the same figures for $\beta = 0.45$ and than discuss the differences.
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=0.65]{./figs/steps45.pdf}
+			\caption{These are the original and truncated magnetization values. $L=1024$ and the temperature was $\beta=0.5$. An $A+\exp(-Bn)$ type function was fitted on the data. The second plot only contains the equilibrium configurations so the fluctuations are more visible.}
+			\label{steps45}
+		\end{figure}
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=0.7]{./figs/sigma45.pdf}
+			\caption{The calculated empirical uncertainty as a function of the block size. $L=1024$ $\beta=0.45$}
+			\label{sigma45}
+		\end{figure}
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=0.75]{./figs/L45.pdf}
+			\caption{Magnetization values at $\beta=0.45$ as a function of $L$.}
+			\label{L45}
+		\end{figure}
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=0.75]{./figs/Lconvergence45.pdf}
+			\caption{Magnetization values at $\beta=0.45$ as a function of $L$ focused on large $L$. The two blue lines are the $2\sigma$ error intervals of the $L=1024$ simulation.}
+			\label{Lconergence45}
+		\end{figure}
+		The most striking difference is the strong correlation between magnetization values produced by the simuation. Figure \ref{steps45} shows this very clearly. This is also connected to the comparatively very slow relaxation to th quilibrium position. The same method I described before dropped the first 652 magnetization values, a factor of about 16 times slower relaxation!
+		
+		This isn't the only reason error estimates are higher. The fluctuation's amplitude is alos much higher in this simulation, further increasing the error estimate.
+		
+		High correlation caused bigger blocks to still be correlated. So much so that I think my simulation lengths are too small for this temperature. Figure \ref{sigma45} is a good illustration for this in my opinion. The drop in the last error is due to there being too few blocks.
+		
+		In summary, relaxation length increased, fluctuation amplitudes increased, and correlation in the simulation also increased. All of these factors make the simulation harder.
+		
+		The final result is
+		\begin{equation}
+		m(0.45) = 7487 \pm 0.0011,
+		\end{equation}
+		but due to the short simulation length the error may be underestimated.
+	\section{Extra figures}
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=0.7]{./figs/extra1.pdf}
+			\caption{Magnetization values for different temperatures during the simulation.}
+			\label{extra1}
+		\end{figure}
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=0.7]{./figs/extra2.pdf}
+			\caption{Magnetization values for a very small simulation. The orientation of the magnetization flips multiple times.}
+			\label{extra1}
+		\end{figure}
+	\bibliographystyle{abeld}
+    %\bibliography{ref}
+\end{document}

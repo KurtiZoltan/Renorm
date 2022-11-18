@@ -40,7 +40,7 @@ def eval(path,nfrac):
     s = np.nanmax(np.array(slist))
     return m, s, N
 
-path = "./build/L=256_beta=0.45.txt"
+path = "./build/L=1024_beta=0.5.txt"
 data = np.loadtxt(path)
 plt.plot(data)
 plt.grid()
@@ -50,9 +50,11 @@ for i in range(N):
     i += 1
     x = i / N
     m, s, x = eval(path, x)
-    plt.plot(x, 1/s**2, ".")
+    plt.plot(x, 1/s**2, "r.")
     print(f"m={m} +/- {s}")
 
 plt.grid()
-plt.plot(0, 0, ".")
+plt.xlabel("Simulation length")
+plt.ylabel("$\\frac{1}{\\sigma_m^2}$")
+plt.savefig("./figs/sigmalengths.pdf")
 plt.show()

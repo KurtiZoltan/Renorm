@@ -1,2 +1,8 @@
 build/*
 .vscode/*
+figs/*
+*.aux
+*.log
+*.out
+*.bak
+
