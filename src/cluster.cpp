@@ -83,7 +83,7 @@ double var(const std::vector<double> &ms)
     return (a - b * b) * ms.size() / (ms.size() - 1);
 }
 
-std::vector<double> block(const std::vector<double> &ms)
+std::vector<double> block(const std::vector<double>& ms)
 {
     double alpha = 1 / std::sqrt(2);
     std::vector<double> newms;
@@ -109,7 +109,7 @@ int main(int argc, char **argv)
     
     std::vector<bool> spins = std::vector<bool>(L * L);
     for (int i = 0; i < L * L; i++)
-        spins[i] = true;
+        spins[i] = 1;
     double p = 1 - exp(-2 * beta);
     double m = MAXFLOAT;
     while (m > magnetization(spins))
@@ -120,46 +120,26 @@ int main(int argc, char **argv)
 
     std::vector<double> ms;
     int i = 0;
-    int imax = 128;
-    while (true)
+    int imax = 1024 * 32;
+    for (; i < imax; i++)
     {
-        for (; i < imax; i++)
-        {
-            wolff(spins, p, L);
-            double m = std::abs(magnetization(spins));
-            ms.push_back(m);
-        }
-        
-        std::vector<double> tempm = ms;
-        std::vector<double> chis;
-        while (tempm.size() >= 32)
-        {
-            double chi = var(tempm) * L * L;
-            chis.push_back(chi);
-            tempm = block(tempm);
-        }
-        
-        bool chifound = false;
-        //find first decrease in chi --> chis[j-1] > chis[j]
-        int j = 1;
-        for (; j < chis.size(); j++) if (chis[j-1] > chis[j]) break;
-        //find next increase in chi --> chis[k-1] < chis[k]
-        int k = j;
-        for (; k < chis.size(); k++) if (chis[k-1] < chis[k]) 
-        {
-            chifound = true;
-            break;
-        }
-        if (chifound)
-        {
-            // std::cout << "chi=" << chis[j-1] << " " << chis[k-1] << "\nimax=" << imax << "\nchis:\n";
-            // for (double c : chis) std::cout << c << "\n";
-            std::cout.precision(10);
-            std::cout << (chis[j-1] + chis[k-1]) / 2;
-            break;
-        }
-        imax *= 2;
+        wolff(spins, p, L);
+        double m = std::abs(magnetization(spins));
+        ms.push_back(m);
     }
+    
+    std::vector<double> chis;
+    while (ms.size() >= 32)
+    {
+        double chi = var(ms) * L * L;
+        chis.push_back(chi);
+        ms = block(ms);
+    }
+    
+    std::cout.precision(10);
+    double chimax = 0;
+    for (double c : chis) if (c > chimax) chimax = c;
+    std::cout << chimax;
     
     // std::fstream file;
     // file.open("a.out", std::ios::out);
