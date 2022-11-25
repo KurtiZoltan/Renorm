@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import subprocess
 from tqdm import tqdm
-from scipy.optimize import curve_fit
 
 def lorentz(x, a, b, c, d):
     return a / (b**2 + (x-c)**2) + d
@@ -26,7 +25,7 @@ for L in Ls:
                 chis.append(chi)
                 x.append(beta)
                 points.append([L, beta, chi])
-            np.savetxt("points2.txt", np.array(points))
+            np.savetxt("points4.txt", np.array(points))
         chisarray = np.array(chis)
         xarray = np.array(x)
         xmax = xarray[np.argmax(chisarray)]
