@@ -4,8 +4,9 @@ set (CMAKE_CXX_STANDARD 20)
 project(IsingModel)
 
 find_package(OpenMP REQUIRED)
+
 add_executable(test src/main.cpp)
-target_link_libraries(test PRIVATE OpenMP::OpenMP_CXX)
 
 add_executable(cluster src/cluster.cpp)
-target_link_libraries(test PRIVATE OpenMP::OpenMP_CXX)
+
+add_executable(mdist src/mdistribution.cpp)

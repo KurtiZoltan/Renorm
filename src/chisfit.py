@@ -44,7 +44,7 @@ for L in Ls:
     
     x = np.linspace(beta1, beta2, 100)
     plt.plot(x, quad(x, *popt))
-
+    plt.title(f"{L}")
     plt.show()
 
 
@@ -54,7 +54,7 @@ def betafit(L, A, nu):
 plt.plot(Ls, betamaxlist, ".")
 popt, pcov = curve_fit(betafit, Ls, betamaxlist)
 nu = popt[1]
-print(f"betac={popt[2]}")
+#print(f"betac={popt[2]}")
 x = np.linspace(32, 160, 300)
 plt.plot(x, betafit(x, *popt))
 print(f"nu={nu:.2f}")
