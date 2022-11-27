@@ -93,7 +93,7 @@ For validation I calculated the expectation value of $\left|m\right|$ for $L=512
 
 \section{The distribution of magnetization values}
 The goal was to plot the distribution of magnetization values as the system goes through the critical point. The simulation is obviously finite so instead of going through the critical point the best approximation is to go through the susceptibility maximum. For $L=128$ using $1024^2$ magnetization values and 50 bins for each distribution the result is figure \ref{mdist}.
-\begin{figure}[H]
+\begin{figure}[!h]
 	\centering
 	\includegraphics[scale=1]{./figs/mdistribution.pdf}
 	\caption{The estimated probability density of the magnetization for a system of size $L=128$ near the susceptibility maximum.}
@@ -110,7 +110,7 @@ The $L$ values used for the simulations ran from 32 to 160 with steps of 16. The
 
 In total I had 250 $\beta$ and $\chi$ pairs for each $L$ value. I fit a parabola to the peaks to determine $\chi_{\mathrm{max}}$ and $\beta_{\mathrm{max}}$. The result is figure \ref{chibeta}.
 
-\begin{figure}[H]
+\begin{figure}[!h]
 	\centering
 	\includegraphics[scale=1]{./figs/chibeta.pdf}
 	\caption{The temperature dependence of susceptibility for systems with different size. The orange dots represent the susceptibility measurements used to fit the parabola. The red dots are the control measurements calculated from 262144 magnetization values. The axis are the same for all sub figures.}
@@ -121,7 +121,7 @@ In total I had 250 $\beta$ and $\chi$ pairs for each $L$ value. I fit a parabola
 
 The final task is to estimate the value of critical exponents based on $\chi_{\mathrm{max}}(L)$ and $\beta_{\mathrm{max}}(L)$. Fitting the expected form on the data I got figure \ref{maxfits}. From $\beta_{\mathrm{max}}(L)$ $\nu$ can be extracted, and according to this simulation $\nu=0.86$. Its exact value in 2d Ising model is $\nu=1$. From $\chi_{\mathrm{max}}(L)$ the $\frac{\gamma}{\nu}$ ratio can be extracted.based on the fit $\gamma=1.65$ its exact value according to the literature is 1.75.
 
-\begin{figure}[H]
+\begin{figure}[!h]
 	\centering
 	\includegraphics[scale=1]{./figs/maxfits.pdf}
 	\caption{Fitting the theoretical large $L$ dependence to the simulated data. $\beta_{\mathrm{max}}(L) = \beta_{\mathrm{c}} - AL^{-\frac{1}{\nu}}$ and $\chi_{\mathrm{max}}(L) = BL^{\frac{\gamma}{\nu}}$ The fitted values are $A=0.73$ $\nu=0.86$ $B=0.50$ $\gamma=1.65$.}
