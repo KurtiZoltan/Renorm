@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+cm = 1 / 2.54
 
 m431 = np.loadtxt("431.out")
 m434 = np.loadtxt("434.out")
@@ -22,6 +23,7 @@ x441 = (bins[1:] + bins[:-1]) / 2
 y441 = n / 1024**2 / (x441[-1] - x441[0]) * N
 plt.show()
 
+plt.figure(figsize=(16*cm, 16*cm))
 plt.plot(x431, y431, label=f"$\\beta=0.431$")
 plt.plot(x434, y434, label=f"$\\beta=0.434$")
 plt.plot(x437, y437, label=f"$\\beta=0.437$")
@@ -31,3 +33,6 @@ plt.xlabel("m")
 plt.ylabel("p")
 plt.savefig("./figs/mdistribution.pdf")
 plt.show()
+
+m = np.loadtxt("clustertest.out")
+print(f"m={np.mean(m):.6f}")

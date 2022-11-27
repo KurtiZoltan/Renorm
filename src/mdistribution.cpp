@@ -97,8 +97,8 @@ std::vector<double> block(const std::vector<double>& ms)
 int main(int argc, char **argv)
 {
     //0.434 0.437 0.441
-    double beta = 0.431;
-    int L = 128;
+    double beta = 0.5;
+    int L = 512;
     
     srand(time(0));
     
@@ -109,13 +109,13 @@ int main(int argc, char **argv)
     double m = MAXFLOAT;
     while (m > magnetization(spins))
     {
-        m = magnetization(spins);
+        m = std::abs(magnetization(spins));
         for (int i = 0; i < 10; i++) wolff(spins, p, L);
     }
 
     std::vector<double> ms;
     int i = 0;
-    int imax = 1024 * 1024;
+    int imax = 1024 * 32;
     for (; i < imax; i++)
     {
         wolff(spins, p, L);
@@ -124,7 +124,7 @@ int main(int argc, char **argv)
     }
     
     std::fstream file;
-    file.open("431.out", std::ios::out);
+    file.open("clustertest.out", std::ios::out);
     if (!file.is_open())
     {
         std::cerr << "File couldn't be opened!\n";

@@ -114,13 +114,13 @@ int main(int argc, char **argv)
     double m = MAXFLOAT;
     while (m > magnetization(spins))
     {
-        m = magnetization(spins);
+        m = std::abs(magnetization(spins));
         for (int i = 0; i < 10; i++) wolff(spins, p, L);
     }
 
     std::vector<double> ms;
     int i = 0;
-    int imax = 1024 * 32;
+    int imax = 1024 * 256;
     for (; i < imax; i++)
     {
         wolff(spins, p, L);

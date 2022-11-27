@@ -25,7 +25,7 @@ for L in Ls:
                 chis.append(chi)
                 x.append(beta)
                 points.append([L, beta, chi])
-            np.savetxt("points4.txt", np.array(points))
+            np.savetxt("points5.txt", np.array(points))
         chisarray = np.array(chis)
         xarray = np.array(x)
         xmax = xarray[np.argmax(chisarray)]
